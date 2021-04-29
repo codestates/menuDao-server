@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Food_lists.init({
-    photo: DataTypes.STRING,
+    food_lists_photo: DataTypes.STRING,
     food_lists_name: DataTypes.STRING
   }, {
     sequelize,
