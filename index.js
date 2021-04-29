@@ -1,35 +1,36 @@
+// server setting
+
+require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+
 const express = require("express");
 const app = express();
 
-
-const indexRouter = require("./routers/index");
-const diaryListRouter = require("./routers/diaryList");
-const mypageRouter = require("./routers/mypage")
+const indexRouter = require("./routes/index");
+const diaryRouter = require("./routes/diary");
+const diaryListRouter = require("./routes/diaryList");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
+app.use(express.urlencoded({ extended: false })); // 이중객체 처리를 위해.
 app.use(
-    cors({
-      origin: '*',
-      credentials: true,
-      methods: ["GET", "POST", "OPTIONS"],
-    })
-  );
-  const HTTP_PORT = process.env.HTTPS_PORT || 4000;
-
+  cors({
+    origin: "*",
+    credentials: true,
+    methods: ["GET", "POST", "OPTIONS"],
+  })
+);
 app.use(cookieParser());
-app.use('/', indexRouter);
-app.use('/diary-list', diaryListRouter);
-app.use('/:users', mypageRouter);
-
-app.listen(HTTP_PORT, () => {
-    console.log(`listening on port ${HTTP_PORT}`);
-})
 
 
+app.use("/", indexRouter);
+app.use("/diary", diaryRouter);
+app.use("/diary-list", diaryListRouter);
 
-  let server;
-  server = app.listen(HTTP_PORT)
+
+const HTTP_PORT = process.env.HTTP_PORT || 4000;
+
+let server;
+
+server = app.listen(HTTP_PORT);
+module.exports = server;

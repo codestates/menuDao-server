@@ -12,16 +12,15 @@ module.exports = {
   test: {
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    database: "menuDao_database_test",
     host: "127.0.0.1",
     dialect: "mysql",
   },
   production: {
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    database: "menuDao_database_production",
     host: "127.0.0.1",
     dialect: "mysql",
   },
 };
-
