@@ -1,5 +1,5 @@
 {
-  "name": "im27project3-server",
+  "name": "menudao-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gookgookJ/im27project3-server.git"
+    "url": "git+https://github.com/gookgookJ/menuDao-server.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gookgookJ/im27project3-server/issues"
+    "url": "https://github.com/gookgookJ/menuDao-server/issues"
   },
-  "homepage": "https://github.com/gookgookJ/im27project3-server#readme",
+  "homepage": "https://github.com/gookgookJ/menuDao-server#readme",
   "devDependencies": {
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
