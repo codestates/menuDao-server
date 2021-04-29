@@ -1,32 +1,17 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Diary_posts', {
+    await queryInterface.createTable('Food_lists', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      date: {
-        type: Sequelize.DATE
-      },
-      food_name: {
+      food_lists_photo: {
         type: Sequelize.STRING
       },
-      food_img: {
-        type: Sequelize.STRING
-      },
-      comment_text: {
-        type: Sequelize.STRING
-      },
-      feeling_img: {
-        type: Sequelize.STRING
-      },
-      feeling_name: {
-        type: Sequelize.STRING
-      },
-      weather: {
+      food_lists_name: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -40,6 +25,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Diary_posts');
+    await queryInterface.dropTable('Food_lists');
   }
 };
