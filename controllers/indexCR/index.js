@@ -107,7 +107,7 @@ module.exports = {
 
   menu_choice_patch: (req, res) => {},
 
-  mypage: (req, res) => {
+  mypage: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers["authorization"];
@@ -117,7 +117,7 @@ module.exports = {
     if (!decoded) {
       return res.status(400).send({ message: "You do not have access rights" });
     } else {
-      Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+      await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
         .then((result) =>
           res.status(201).send({
             message: "successfully get user infomation",
