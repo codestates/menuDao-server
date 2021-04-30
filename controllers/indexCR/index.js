@@ -43,27 +43,6 @@ module.exports = {
         res.status(401).send({ message: "Invalid user or Wrong password" });
         console.error(err);
       });
-
-    // if (!userInfo) {
-    //   res.status(401).send({ message: "Invalid user or Wrong password" });
-    // } else {
-    //   const { ACCESS_SECRET } = process.env;
-    //   const { REFRESH_SECRET } = process.env;
-    //   const accessToken = jwt.sign(userInfo.dataValues, ACCESS_SECRET, {
-    //     expiresIn: "1 days",
-    //   });
-    //   const refreshToken = jwt.sign(userInfo.dataValues, REFRESH_SECRET, {
-    //     expiresIn: "7 days",
-    //   });
-    //   userInfo.refreshToken = refreshToken;
-    //   res
-    //     .cookie("refreshToken", userInfo.refreshToken, {
-    //       maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
-    //       httpOnly: true,
-    //     })
-    //     .status(200)
-    //     .send({ accessToken: accessToken });
-    // }
   },
 
   signup: async (req, res) => {
@@ -103,13 +82,14 @@ module.exports = {
 
   mypage: (req, res) => {
     // 엑세스 토큰을 헤더에 담아서 넘겨줌.
-    const accessToken = req.headers["accessToken"];
-    if (!accessToken) {
+    const authorization = req.headers["authorization"];
+    if (!authorization) {
       res.status(400).send({ message: "You do not have access rights" });
     } else {
       // barer 랑 토큰 분리
-      const token = accessToken.split(" ")[1];
+      const token = authorization;
       // 분리된 개별 토큰을 복호화
+      const { ACCESS_SECRET } = process.env;
       const data = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
         // 복호화에 실패했을 경우
         if (err) {
