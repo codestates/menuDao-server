@@ -8,24 +8,62 @@ module.exports = {
   // login
 
   signin: async (req, res) => {
-    const userInfo = await Users.findOne({
-      where: { user_id: req.body.user_id, user_password: req.body.password },
-      attributes: ["user_id", "user_birthday", "user_sex", "user_id"],
-    });
-    if (!userInfo) {
-      res.status(401).send({ message: "Invalid user or Wrong password" });
-    } else {
-      const { ACCESS_SECRET } = process.env;
-      // const { REFRESH_SECRET } = process.env;
-      const accessToken = jwt.sign(userInfo.dataValues, ACCESS_SECRET, {
-        expiresIn: "1 days",
+    await Users.findOne({
+      where: {
+        user_id: req.body.user_id,
+        user_password: req.body.user_password,
+      },
+    })
+      .then((result) => {
+        const { ACCESS_SECRET } = process.env;
+        const { REFRESH_SECRET } = process.env;
+        const accessToken = jwt.sign(
+          {
+            userdata: result.dataValues,
+          },
+          ACCESS_SECRET
+        );
+        const refreshToken = jwt.sign(
+          {
+            userdata: result.dataValues,
+          },
+          REFRESH_SECRET
+        );
+
+        result.refreshToken = refreshToken;
+        res
+          .cookie("refreshToken", result.refreshToken, {
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
+            httpOnly: true,
+          })
+          .status(200)
+          .send({ accessToken: accessToken });
+      })
+      .catch((err) => {
+        res.status(401).send({ message: "Invalid user or Wrong password" });
+        console.error(err);
       });
-      /*       const refreshToken = jwt.sign(userInfo.dataValues, REFRESH_SECRET, {
-        expiresIn: "7 days",
-      });
-      res.cookie("refreshToken", refreshToken); */
-      res.status(200).send({ accessToken: accessToken });
-    }
+
+    // if (!userInfo) {
+    //   res.status(401).send({ message: "Invalid user or Wrong password" });
+    // } else {
+    //   const { ACCESS_SECRET } = process.env;
+    //   const { REFRESH_SECRET } = process.env;
+    //   const accessToken = jwt.sign(userInfo.dataValues, ACCESS_SECRET, {
+    //     expiresIn: "1 days",
+    //   });
+    //   const refreshToken = jwt.sign(userInfo.dataValues, REFRESH_SECRET, {
+    //     expiresIn: "7 days",
+    //   });
+    //   userInfo.refreshToken = refreshToken;
+    //   res
+    //     .cookie("refreshToken", userInfo.refreshToken, {
+    //       maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
+    //       httpOnly: true,
+    //     })
+    //     .status(200)
+    //     .send({ accessToken: accessToken });
+    // }
   },
 
   signup: async (req, res) => {
@@ -43,6 +81,7 @@ module.exports = {
         user_name: req.body.user_name,
         user_sex: req.body.user_sex,
         user_birthday: req.body.user_birthday,
+        // user_refreshToken: null,
       })
         .then((result) => {
           res.status(201).send({
