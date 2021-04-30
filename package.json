@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gookgookJ/menuDao-server.git"
+    "url": "git+https://github.com/Hprogram/menuDao-server.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/gookgookJ/menuDao-server/issues"
+    "url": "https://github.com/Hprogram/menuDao-server/issues"
   },
-  "homepage": "https://github.com/gookgookJ/menuDao-server#readme",
+  "homepage": "https://github.com/Hprogram/menuDao-server#readme",
   "devDependencies": {
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
