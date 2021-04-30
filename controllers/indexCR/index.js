@@ -9,14 +9,14 @@ module.exports = {
 
   signin: async (req, res) => {
     const userInfo = await Users.findOne({
-      where: { user_id: req.body.id, user_password: req.body.password },
-      attributes: ["id", "user_birthday", "user_sex", "user_id"],
+      where: { user_id: req.body.user_id, user_password: req.body.password },
+      attributes: ["user_id", "user_birthday", "user_sex", "user_id"],
     });
     if (!userInfo) {
       res.status(401).send({ message: "Invalid user or Wrong password" });
     } else {
       const { ACCESS_SECRET } = process.env;
-      const { REFRESH_SECRET } = process.env;
+      // const { REFRESH_SECRET } = process.env;
       const accessToken = jwt.sign(userInfo.dataValues, ACCESS_SECRET, {
         expiresIn: "1 days",
       });
@@ -28,7 +28,33 @@ module.exports = {
     }
   },
 
-  signup: (req, res) => {},
+  signup: async (req, res) => {
+    const userInfo = await Users.findOne({
+      where: { user_id: req.body.user_id },
+      attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
+    });
+
+    if (userInfo) {
+      res.status(409).send({ message: "This user_id is exists" });
+    } else {
+      Users.create({
+        user_id: req.body.user_id,
+        user_password: req.body.user_password,
+        user_name: req.body.user_name,
+        user_sex: req.body.user_sex,
+        user_birthday: req.body.user_birthday,
+      })
+        .then((result) => {
+          res.status(201).send({
+            userInfo: result,
+            message: "succesfully created your id",
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  },
 
   signout: (req, res) => {},
 
