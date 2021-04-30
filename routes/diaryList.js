@@ -1,4 +1,5 @@
-const diaryListControllers = require("../controllers/diaryCR/index");
+const diaryListControllers = require("../controllers/diaryListCR/index");
+
 const express = require("express");
 const router = express.Router();
 

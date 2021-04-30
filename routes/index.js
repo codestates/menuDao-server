@@ -1,3 +1,4 @@
+// index endpoint
 const indexControllers = require("../controllers/indexCR/index");
 
 const express = require("express");
@@ -8,6 +9,6 @@ router.post("/signup", indexControllers.signup);
 router.post("/signout", indexControllers.signout);
 router.post("/menu-choice", indexControllers.menu_choice_post);
 router.patch("/menu-choice", indexControllers.menu_choice_patch);
-router.get("/mypage", indexControllers.mypage)
+router.get("/mypage", indexControllers.mypage);
 
 module.exports = router;
