@@ -21,13 +21,19 @@ module.exports = {
           {
             userdata: result.dataValues,
           },
-          ACCESS_SECRET
+          ACCESS_SECRET,
+          {
+            expiresIn: "1 days",
+          }
         );
         const refreshToken = jwt.sign(
           {
             userdata: result.dataValues,
           },
-          REFRESH_SECRET
+          REFRESH_SECRET,
+          {
+            expiresIn: "7 days",
+          }
         );
 
         result.refreshToken = refreshToken;
@@ -81,31 +87,32 @@ module.exports = {
   menu_choice_patch: (req, res) => {},
 
   mypage: (req, res) => {
-    // 엑세스 토큰을 헤더에 담아서 넘겨줌.
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
     const authorization = req.headers["authorization"];
-    if (!authorization) {
-      res.status(400).send({ message: "You do not have access rights" });
+    const token = authorization.split(" ")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+
+    if (!decoded) {
+      return res.status(400).send({ message: "You do not have access rights" });
     } else {
-      // barer 랑 토큰 분리
-      const token = authorization;
-      // 분리된 개별 토큰을 복호화
-      const { ACCESS_SECRET } = process.env;
-      const data = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
-        // 복호화에 실패했을 경우
-        if (err) {
-          return res
-            .status(400)
-            .send({ message: "You do not have access rights" });
-        } else {
+      Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+        .then((result) =>
           res.status(201).send({
             message: "successfully get user infomation",
-            user_name: data.user_name,
-            user_birthday: data.user_birthday,
-            user_sex: data.user_sex,
-            user_id: data.user_id,
+            user_name: result.user_name,
+            user_birthday: result.user_birthday,
+            user_sex: result.user_sex,
+            user_id: result.user_id,
+          })
+        )
+        .catch((err) => {
+          res.status(400).send({
+            message: "You do not have access rights",
+            decoded: decoded,
           });
-        }
-      });
+          console.error(err);
+        });
     }
   },
 };
