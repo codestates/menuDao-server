@@ -23,9 +23,6 @@ module.exports = {
       user_id: {
         type: Sequelize.STRING,
       },
-      user_img: {
-        type: Sequelize.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -37,6 +34,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Users");
+    await queryInterface.removeColumn("Users", "user_img");
   },
 };
