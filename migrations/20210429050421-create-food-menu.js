@@ -11,15 +11,14 @@ module.exports = {
       food_menu_name: {
         type: Sequelize.STRING,
       },
-      food_lists_id: {
-        type: Sequelize.INTEGER,
-      },
       createdAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
     });

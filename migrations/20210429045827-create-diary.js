@@ -1,9 +1,6 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // return queryInterface.addColumn("Users", "roles", {
-    //   type: Sequelize.STRING,
-    // });
     await queryInterface.createTable("Diary", {
       id: {
         allowNull: false,
@@ -26,23 +23,22 @@ module.exports = {
       weather: {
         type: Sequelize.STRING,
       },
-      users_id: {
-        type: Sequelize.INTEGER,
-      },
-      user_food_photo: {
+      users_food_photo: {
         type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Diaries");
+    await queryInterface.dropTable("Diary");
   },
 };
