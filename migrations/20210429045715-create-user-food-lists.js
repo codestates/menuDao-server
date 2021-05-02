@@ -8,9 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      food_lists_photo: {
-        type: Sequelize.STRING,
-      },
       food_lists_name: {
         type: Sequelize.STRING,
       },

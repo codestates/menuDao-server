@@ -1,6 +1,9 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
+    // return queryInterface.addColumn("Users", "roles", {
+    //   type: Sequelize.STRING,
+    // });
     await queryInterface.createTable("Diary", {
       id: {
         allowNull: false,
@@ -25,6 +28,9 @@ module.exports = {
       },
       users_id: {
         type: Sequelize.INTEGER,
+      },
+      user_food_photo: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
