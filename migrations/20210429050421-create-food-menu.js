@@ -8,21 +8,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      food_menu_photo: {
-        type: Sequelize.STRING,
-      },
       food_menu_name: {
         type: Sequelize.STRING,
       },
-      food_lists_id: {
-        type: Sequelize.INTEGER,
-      },
       createdAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
+        defaultValue: Sequelize.literal("now()"),
         type: Sequelize.DATE,
       },
     });

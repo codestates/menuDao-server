@@ -9,12 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Food_menu.hasMany(models.Food, { foreignKey: "food_menu_id" });
+      Food_menu.belongsTo(models.Food_lists, {
+        foreignKey: { name: "food_lists_id" },
+      });
     }
   }
   Food_menu.init(
     {
       food_menu_name: DataTypes.STRING,
-      food_lists_id: DataTypes.INTEGER,
     },
     {
       sequelize,

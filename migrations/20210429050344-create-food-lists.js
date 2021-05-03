@@ -9,18 +9,17 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
-        food_lists_photo: {
-          type: Sequelize.STRING,
-        },
         food_lists_name: {
           type: Sequelize.STRING,
         },
         createdAt: {
           allowNull: false,
+          defaultValue: Sequelize.literal("now()"),
           type: Sequelize.DATE,
         },
         updatedAt: {
           allowNull: false,
+          defaultValue: Sequelize.literal("now()"),
           type: Sequelize.DATE,
         },
       })
@@ -32,6 +31,9 @@ module.exports = {
       });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Food_lists");
+    [
+      await queryInterface.dropTable("Users_food_lists"),
+      await queryInterface.dropTable("Food_lists"),
+    ];
   },
 };

@@ -1,27 +1,16 @@
 "use strict";
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface
-      .createTable("Users", {
+      .createTable("Food", {
         id: {
           allowNull: false,
           autoIncrement: true,
           primaryKey: true,
           type: Sequelize.INTEGER,
         },
-        user_name: {
-          type: Sequelize.STRING,
-        },
-        user_password: {
-          type: Sequelize.STRING,
-        },
-        user_birthday: {
-          type: Sequelize.STRING,
-        },
-        user_sex: {
-          type: Sequelize.STRING,
-        },
-        user_id: {
+        food_name: {
           type: Sequelize.STRING,
         },
         createdAt: {
@@ -36,18 +25,14 @@ module.exports = {
         },
       })
       .then(function () {
-        queryInterface.createTable("Users_food_lists", {
-          users_id: {
-            type: Sequelize.INTEGER,
-            references: { model: "Users", key: "id" },
-          },
+        queryInterface.addColumn("Diary_food", "Food_id", {
+          type: Sequelize.INTEGER,
+          references: { model: "Food", key: "id" },
         });
       });
   },
+
   down: async (queryInterface, Sequelize) => {
-    [
-      await queryInterface.dropTable("Users_food_lists"),
-      await queryInterface.dropTable("Users"),
-    ];
+    await queryInterface.removeColumn("Diary_food", "Food_id");
   },
 };
