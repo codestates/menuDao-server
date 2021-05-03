@@ -8,9 +8,53 @@ module.exports = {
   // login
 
   signin: async (req, res) => {
-    const userInfo = await user.findOne({
-      where: { user_id: req.body.id, user_password: req.body.password },
-      attributes: ["id", "user_birthday", "user_sex", "user_img", "user_id"],
+    await Users.findOne({
+      where: {
+        user_id: req.body.user_id,
+        user_password: req.body.user_password,
+      },
+    })
+      .then((result) => {
+        const { ACCESS_SECRET } = process.env;
+        const { REFRESH_SECRET } = process.env;
+        const accessToken = jwt.sign(
+          {
+            userdata: result.dataValues,
+          },
+          ACCESS_SECRET,
+          {
+            expiresIn: "1 days",
+          }
+        );
+        const refreshToken = jwt.sign(
+          {
+            userdata: result.dataValues,
+          },
+          REFRESH_SECRET,
+          {
+            expiresIn: "7 days",
+          }
+        );
+
+        result.refreshToken = refreshToken;
+        res
+          .cookie("refreshToken", result.refreshToken, {
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
+            httpOnly: true,
+          })
+          .status(200)
+          .send({ accessToken: accessToken });
+      })
+      .catch((err) => {
+        res.status(401).send({ message: "Invalid user or Wrong password" });
+        console.error(err);
+      });
+  },
+
+  signup: async (req, res) => {
+    const userInfo = await Users.findOne({
+      where: { user_id: req.body.user_id },
+      attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
     });
     if (!userInfo) {
       res.status(401).send({ message: "Invalid user or Wrong password" });
@@ -32,9 +76,66 @@ module.exports = {
 
   signout: (req, res) => {},
 
-  menu_choice_post: (req, res) => {},
+  mypage_get: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
+    const authorization = req.headers["authorization"];
+    const token = authorization.split(" ")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+
+    if (!decoded) {
+      return res.status(400).send({ message: "You do not have access rights" });
+    } else {
+      await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+        .then((result) =>
+          res.status(201).send({
+            message: "successfully get user infomation",
+            user_name: result.user_name,
+            user_birthday: result.user_birthday,
+            user_sex: result.user_sex,
+            user_id: result.user_id,
+          })
+        )
+        .catch((err) => {
+          res.status(400).send({
+            message: "You do not have access rights",
+            decoded: decoded,
+          });
+          console.error(err);
+        });
+    }
+  },
+  // 비밀번호 변경 구현 완료
+  mypage_patch: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
+    const authorization = req.headers["authorization"];
+    const token = authorization.split(" ")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+    if (!decoded) {
+      return res.status(400).send({ message: "You do not have access rights" });
+    } else {
+      await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+        .then((result) =>
+          result.update({ user_password: req.body.user_password })
+        )
+        .then(() => {
+          res.status(201).send({
+            message: "successfully update user infomation",
+          });
+        })
+        .catch((err) => {
+          res.status(400).send({
+            message: "You do not have access rights",
+            decoded: decoded,
+          });
+          console.error(err);
+        });
+    }
+  },
 
   menu_choice_patch: (req, res) => {},
 
-  mypage: (req, res) => {},
+  menu_choice_post: (req, res) => {},
+  // 대분류, 날씨, 기분에 따른 112개의 조건문 분기
 };
