@@ -7,7 +7,15 @@ module.exports = {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers.cookie;
-    const token = authorization.split("=")[1];
+    const splits = authorization.split(" ");
+    const access = [];
+
+    splits.map((el) => {
+      if (el.includes("accessToken")) {
+        access.push(el);
+      }
+    });
+    const token = access[0].split("=")[1].slice(0, -1);
     const decoded = jwt.verify(token, ACCESS_SECRET);
 
     if (!decoded) {
@@ -42,7 +50,15 @@ module.exports = {
   diary_list_delete: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const authorization = req.headers.cookie;
-    const token = authorization.split("=")[1];
+    const splits = authorization.split(" ");
+    const access = [];
+
+    splits.map((el) => {
+      if (el.includes("accessToken")) {
+        access.push(el);
+      }
+    });
+    const token = access[0].split("=")[1].slice(0, -1);
     const decoded = jwt.verify(token, ACCESS_SECRET);
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
