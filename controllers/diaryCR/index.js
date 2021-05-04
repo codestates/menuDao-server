@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const { Diary } = require("../../models");
-=======
 const { Diaries } = require("../../models");
->>>>>>> 4cdc9b96d519251d0bdab28b01eb74da35820665
 const { Users } = require("../../models");
 const jwt = require("jsonwebtoken");
 
@@ -12,21 +8,30 @@ module.exports = {
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers["authorization"];
     const token = authorization.split(" ")[1];
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
 
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
       await Diaries.findOne({ where: { id: req.body.diary_id } })
         .then((result) =>
-          res.status(201).send({
-            message: "succesfully get user diary",
-            diarydata: result.userdata,
-          })
+          Diaries.findOne({ where: { users_id: result.dataValues.id } }).then(
+            (el) => {
+              console.log(el.dataValues);
+              res.status(201).send({
+                message: "successfully diary posting",
+                diarydata: el.dataValues,
+              });
+            }
+          )
         )
         .catch((err) => {
-          res.status(401).send({
-            message: "You do not have access rights",
+          res.status(400).send({
+            message: "Bad request",
             decoded: decoded,
           });
           console.error(err);
@@ -39,7 +44,11 @@ module.exports = {
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers["authorization"];
     const token = authorization.split(" ")[1];
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
 
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
@@ -50,7 +59,7 @@ module.exports = {
         // })
         .then((result) =>
           Diaries.create({
-            // users_id: result.dataValues.id,
+            users_id: result.dataValues.id,
             comment: "내용을 입력해주세요.",
             date: req.body.date,
             weather: req.body.weather,
@@ -63,8 +72,8 @@ module.exports = {
           )
         )
         .catch((err) => {
-          res.status(401).send({
-            message: "You do not have access rights",
+          res.status(400).send({
+            message: "Bad request",
             decoded: decoded,
           });
           console.error(err);
@@ -77,7 +86,11 @@ module.exports = {
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers["authorization"];
     const token = authorization.split(" ")[1];
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
 
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
@@ -90,8 +103,8 @@ module.exports = {
           })
         )
         .catch((err) => {
-          res.status(401).send({
-            message: "You do not have access rights",
+          res.status(400).send({
+            message: "Bad request",
             decoded: decoded,
           });
           console.error(err);
