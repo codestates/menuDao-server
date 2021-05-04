@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       weather: DataTypes.STRING,
       choice_menu: DataTypes.STRING,
       users_id: DataTypes.STRING,
+      comment: DataTypes.STRING,
     },
     {
       sequelize,
