@@ -7,7 +7,15 @@ module.exports = {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers.cookie;
-    const token = authorization.split("=")[1];
+    const splits = authorization.split(" ");
+    const access = [];
+
+    splits.map((el) => {
+      if (el.includes("accessToken")) {
+        access.push(el);
+      }
+    });
+    const token = access[0].split("=")[1].slice(0, -1);
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -38,12 +46,19 @@ module.exports = {
         });
     }
   },
-
   diary_post: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers.cookie;
-    const token = authorization.split("=")[1];
+    const splits = authorization.split(" ");
+    const access = [];
+
+    splits.map((el) => {
+      if (el.includes("accessToken")) {
+        access.push(el);
+      }
+    });
+    const token = access[0].split("=")[1].slice(0, -1);
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -53,7 +68,7 @@ module.exports = {
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
-      await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+      Users.findOne({ where: { user_id: decoded.userdata.user_id } })
         // .then(result =>{
         //   res.send("응안돼")
         // })
@@ -61,7 +76,7 @@ module.exports = {
           Diaries.create({
             users_id: result.dataValues.id,
             comment: "입력해주세요",
-            date: "2021-05-04",
+            date: new Date(),
             weather: req.body.weather,
             feeling: req.body.feeling,
             choice_menu: req.body.big_choice_menu,
@@ -76,16 +91,23 @@ module.exports = {
             message: "Bad request",
             decoded: decoded,
           });
-          console.error(err);
+          // console.error(err);
         });
     }
   },
-
   diary_patch: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
     const authorization = req.headers.cookie;
-    const token = authorization.split("=")[1];
+    const splits = authorization.split(" ");
+    const access = [];
+
+    splits.map((el) => {
+      if (el.includes("accessToken")) {
+        access.push(el);
+      }
+    });
+    const token = access[0].split("=")[1].slice(0, -1);
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
