@@ -17,6 +17,7 @@ module.exports = {
       .then((result) => {
         const { ACCESS_SECRET } = process.env;
         const { REFRESH_SECRET } = process.env;
+        // console.log(result);
         const accessToken = jwt.sign(
           {
             userdata: result.dataValues,
@@ -54,7 +55,7 @@ module.exports = {
   signup: async (req, res) => {
     const userInfo = await Users.findOne({
       where: { user_id: req.body.user_id },
-      attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
+      // attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
     });
 
     if (userInfo) {
@@ -140,8 +141,38 @@ module.exports = {
     }
   },
 
-  menu_choice_patch: (req, res) => {},
+  menu_choice_patch: async (req, res) => {},
 
-  menu_choice_post: (req, res) => {},
+  menu_choice_post: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
+
+    console.log(req.body);
+
+    res.send("ok");
+    // const authorization = req.headers["authorization"];
+    // const token = authorization.split(" ")[1];
+    // const decoded = jwt.verify(token, ACCESS_SECRET);
+    // if (!decoded) {
+    //   return res.status(400).send({ message: "You do not have access rights" });
+    // } else {
+    //   await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+    //     .then((result) =>
+    //       result.update({ user_password: req.body.user_password })
+    //     )
+    //     .then(() => {
+    //       res.status(201).send({
+    //         message: "successfully update user infomation",
+    //       });
+    //     })
+    //     .catch((err) => {
+    //       res.status(400).send({
+    //         message: "You do not have access rights",
+    //         decoded: decoded,
+    //       });
+    //       console.error(err);
+    //     });
+    // }
+  },
   // 대분류, 날씨, 기분에 따른 112개의 조건문 분기
 };
