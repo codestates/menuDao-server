@@ -95,7 +95,7 @@ module.exports = {
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
-      await Diaries.findOne({ where: { id: 6 } })
+      await Diaries.findOne({ where: { id: req.body.diary_id } })
         .then((result) => result.update({ comment: req.body.comment }))
         .then(
           res.status(201).send({
