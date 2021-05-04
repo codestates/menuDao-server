@@ -9,11 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Food_lists.hasMany(models.Food_menu, { foreignKey: "food_lists_id" });
+      Food_lists.hasMany(models.Users_food_lists, {
+        foreignKey: "food_lists_id",
+      });
     }
   }
   Food_lists.init(
     {
-      food_lists_photo: DataTypes.STRING,
       food_lists_name: DataTypes.STRING,
     },
     {

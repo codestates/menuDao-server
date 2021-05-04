@@ -17,13 +17,14 @@ module.exports = {
       .then((result) => {
         const { ACCESS_SECRET } = process.env;
         const { REFRESH_SECRET } = process.env;
+        // console.log(result);
         const accessToken = jwt.sign(
           {
             userdata: result.dataValues,
           },
           ACCESS_SECRET,
           {
-            expiresIn: "1 days",
+            expiresIn: "15 m",
           }
         );
         const refreshToken = jwt.sign(
@@ -36,14 +37,13 @@ module.exports = {
           }
         );
 
-        result.refreshToken = refreshToken;
         res
-          .cookie("refreshToken", result.refreshToken, {
-            maxAge: 1000 * 60 * 60 * 24 * 7, // 7일간 유지
+          .status(200)
+          .cookie("accessToken", accessToken, {
+            maxAge: 1000 * 60 * 60, // 15분 간유지
             httpOnly: true,
           })
-          .status(200)
-          .send({ accessToken: accessToken });
+          .send({ message: "successfully sign in" });
       })
       .catch((err) => {
         res.status(401).send({ message: "Invalid user or Wrong password" });
@@ -54,7 +54,7 @@ module.exports = {
   signup: async (req, res) => {
     const userInfo = await Users.findOne({
       where: { user_id: req.body.user_id },
-      attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
+      // attributes: ["user_id", "user_name", "user_birthday", "user_sex"],
     });
 
     if (userInfo) {
@@ -80,21 +80,52 @@ module.exports = {
     }
   },
 
-  signout: (req, res) => {},
-
-  menu_choice_post: (req, res) => {},
-
-  menu_choice_patch: (req, res) => {},
-
-  mypage: async (req, res) => {
+  signout: (req, res) => {
     const { ACCESS_SECRET } = process.env;
-    const { REFRESH_SECRET } = process.env;
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
+    const accessToken = jwt.sign(
+      {
+        userdata: "data",
+      },
+      ACCESS_SECRET,
+      {
+        expiresIn: "1s",
+      }
+    );
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
 
     if (!decoded) {
-      return res.status(400).send({ message: "You do not have access rights" });
+      res.status(400).send({ message: "You do not have access rights" });
+    } else {
+      res
+        .status(201)
+        .cookie("accessToken", accessToken, {
+          maxAge: 0, // 15분 간유지
+          httpOnly: true,
+        })
+        .send({ message: "successfully signed out" });
+    }
+  },
+
+  mypage_get: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      }
+      return decoded;
+    });
+
+    if (!decoded) {
+      return res.status(401).send({ message: "You do not have access rights" });
     } else {
       await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
         .then((result) =>
@@ -108,11 +139,49 @@ module.exports = {
         )
         .catch((err) => {
           res.status(400).send({
-            message: "You do not have access rights",
+            message: "Bad request",
             decoded: decoded,
           });
           console.error(err);
         });
     }
   },
+  // 비밀번호 변경 구현 완료
+  mypage_patch: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+    const { REFRESH_SECRET } = process.env;
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
+
+    if (!decoded) {
+      return res.status(401).send({ message: "You do not have access rights" });
+    } else {
+      await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
+        .then((result) =>
+          result.update({ user_password: req.body.user_password })
+        )
+        .then(() => {
+          res.status(201).send({
+            message: "successfully update user infomation",
+          });
+        })
+        .catch((err) => {
+          res.status(400).send({
+            message: "Bad request",
+            decoded: decoded,
+          });
+          console.error(err);
+        });
+    }
+  },
+
+  menu_choice_post: async (req, res) => {
+    const { ACCESS_SECRET } = process.env;
+  },
+  // 대분류, 날씨, 기분에 따른 112개의 조건문 분기
 };

@@ -15,18 +15,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false })); // 이중객체 처리를 위해.
 app.use(
   cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ["GET", "POST", "OPTIONS"],
   })
 );
 app.use(cookieParser());
 
-
 app.use("/", indexRouter);
 app.use("/diary", diaryRouter);
 app.use("/diary-list", diaryListRouter);
-
 
 const HTTP_PORT = process.env.HTTP_PORT || 4000;
 
