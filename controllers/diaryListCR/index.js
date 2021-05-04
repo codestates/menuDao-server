@@ -1,36 +1,37 @@
-const { Diary } = require("../../models");
+const { Diaries } = require("../../models");
 const { Users } = require("../../models");
 const jwt = require("jsonwebtoken");
+
 module.exports = {
   diary_list_get: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
     const decoded = jwt.verify(token, ACCESS_SECRET);
 
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
       await Users.findOne({ where: { user_id: decoded.userdata.user_id } })
-        .then(
-          (result) =>
-            Diary.findAll({
-              where: { users_id: result.userdata.id },
-            }).then((datas) => {
-              console.log(datas);
-            })
-          //   res.status(201).send({
-          //     message: "successfully get user infomation",
-          //     user_name: result.user_name,
-          //     user_birthday: result.user_birthday,
-          //     user_sex: result.user_sex,
-          //     user_id: result.user_id,
-          //   })
+        .then((result) =>
+          Diaries.findAll({
+            where: { users_id: result.dataValues.id },
+          }).then((datas) => {
+            const diaries = [];
+            datas.map((el) => {
+              // console.log(el.dataValues);
+              diaries.push(el.dataValues);
+            });
+            res.status(201).send({
+              diaries: diaries,
+              message: "successfully get Diaries-list",
+            });
+          })
         )
         .catch((err) => {
-          res.status(401).send({
-            message: "You do not have access rights",
+          res.status(400).send({
+            message: "Bad request",
             decoded: decoded,
           });
           console.error(err);
@@ -40,6 +41,29 @@ module.exports = {
 
   diary_list_delete: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
-    const { REFRESH_SECRET } = process.env;
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+    if (!decoded) {
+      return res.status(401).send({ message: "You do not have access rights" });
+    } else {
+      await req.body.diary_list
+        .map((el) => {
+          // [1,2,3]번 다이어리 리스트를 삭제해주세요.
+          Diaries.destroy({ where: { id: el.diary_id } });
+        })
+        .then(
+          res.status(201).send({
+            message: "successfully delete diary list",
+          })
+        )
+        .catch((err) => {
+          res.status(400).send({
+            message: "Bad request",
+            decoded: decoded,
+          });
+          console.error(err);
+        });
+    }
   },
 };
