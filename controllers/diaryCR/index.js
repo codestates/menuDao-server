@@ -6,8 +6,8 @@ module.exports = {
   diary_get: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -42,8 +42,8 @@ module.exports = {
   diary_post: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -60,8 +60,8 @@ module.exports = {
         .then((result) =>
           Diaries.create({
             users_id: result.dataValues.id,
-            comment: "내용을 입력해주세요.",
-            date: req.body.date,
+            comment: "입력해주세요",
+            date: "2021-05-04",
             weather: req.body.weather,
             feeling: req.body.feeling,
             choice_menu: req.body.big_choice_menu,
@@ -84,8 +84,8 @@ module.exports = {
   diary_patch: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
-    const authorization = req.headers["authorization"];
-    const token = authorization.split(" ")[1];
+    const authorization = req.headers.cookie;
+    const token = authorization.split("=")[1];
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -95,7 +95,7 @@ module.exports = {
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
-      await Diaries.findOne({ where: { id: req.body.diary_id } })
+      await Diaries.findOne({ where: { id: 6 } })
         .then((result) => result.update({ comment: req.body.comment }))
         .then(
           res.status(201).send({
