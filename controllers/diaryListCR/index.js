@@ -16,7 +16,11 @@ module.exports = {
       }
     });
     const token = access[0].split("=")[1].slice(0, -1);
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
 
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
@@ -59,7 +63,11 @@ module.exports = {
       }
     });
     const token = access[0].split("=")[1].slice(0, -1);
-    const decoded = jwt.verify(token, ACCESS_SECRET);
+    const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
+      if (err) {
+        return undefined;
+      } else return decoded;
+    });
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {

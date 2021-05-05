@@ -46,7 +46,6 @@ module.exports = {
         });
     }
   },
-
   diary_post: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
@@ -77,10 +76,11 @@ module.exports = {
           Diaries.create({
             users_id: result.dataValues.id,
             comment: "입력해주세요",
-            date: "2021-05-04",
+            date: new Date(),
             weather: req.body.weather,
             feeling: req.body.feeling,
-            choice_menu: req.body.big_choice_menu,
+            choice_menu: req.body.choice_menu,
+            big_choice_menu: req.body.big_choice_menu,
           }).then(
             res.status(201).send({
               message: "successfully diary posting",
@@ -92,11 +92,10 @@ module.exports = {
             message: "Bad request",
             decoded: decoded,
           });
-          console.error(err);
+          // console.error(err);
         });
     }
   },
-
   diary_patch: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const { REFRESH_SECRET } = process.env;
