@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Food.init(
     {
       food_name: DataTypes.STRING,
-      food_menu_id: DataTypes.INTEGER,
+      // food_menu_id: DataTypes.INTEGER,
     },
     {
       sequelize,

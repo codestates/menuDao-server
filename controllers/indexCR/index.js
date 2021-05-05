@@ -225,7 +225,7 @@ module.exports = {
       }
     });
     // console.log(access);
-    const token = access[0].split("=")[1]; // 클라이언트에서 작성 할 때는 .slice(0,-1);을 추가
+    const token = access[0].split("=")[1].slice(0, -1); // 클라이언트에서 작성 할 때는 .slice(0,-1);을 추가
     const decoded = jwt.verify(token, ACCESS_SECRET, (err, decoded) => {
       if (err) {
         return undefined;
@@ -265,8 +265,8 @@ module.exports = {
                       menus.push(data.dataValues.food_name);
                     });
                     res.status(200).send({
-                      big_choice_menu: big_choice_menu,
-                      menu: menus[Math.floor(Math.random() * menus.length)],
+                      big_choice_menu: big_choice_menu, // 한식
+                      menu: menus[Math.floor(Math.random() * menus.length)], // choicemenu 33_김치찌개
                     });
                     console.log(
                       menus[Math.floor(Math.random() * menus.length)]
