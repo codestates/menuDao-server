@@ -54,6 +54,7 @@ module.exports = {
   diary_list_delete: async (req, res) => {
     const { ACCESS_SECRET } = process.env;
     const authorization = req.headers.cookie;
+    // console.log(authorization);
     const splits = authorization.split(" ");
     const access = [];
 
@@ -71,22 +72,14 @@ module.exports = {
     if (!decoded) {
       return res.status(401).send({ message: "You do not have access rights" });
     } else {
-      await req.body.diary_list
-        .map((el) => {
-          // [1,2,3]번 다이어리 리스트를 삭제해주세요.
-          Diaries.destroy({ where: { id: el.diary_id } });
-        })
-        .then(
+      Diaries.destroy({ where: { id: req.body.diary_id } })
+        .then((el) => {
           res.status(201).send({
             message: "successfully delete diary list",
-          })
-        )
-        .catch((err) => {
-          res.status(400).send({
-            message: "Bad request",
-            decoded: decoded,
           });
-          console.error(err);
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   },
