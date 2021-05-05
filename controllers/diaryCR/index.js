@@ -79,7 +79,8 @@ module.exports = {
             date: new Date(),
             weather: req.body.weather,
             feeling: req.body.feeling,
-            choice_menu: req.body.big_choice_menu,
+            choice_menu: req.body.choice_menu,
+            big_choice_menu: req.body.big_choice_menu,
           }).then(
             res.status(201).send({
               message: "successfully diary posting",
