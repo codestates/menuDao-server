@@ -30,5 +30,7 @@ const HTTP_PORT = process.env.HTTP_PORT || 4000;
 
 let server;
 
-server = app.listen(HTTP_PORT);
+server = app.listen(HTTP_PORT, () => {
+  console.log("서버가 4000번포트에서 작동중");
+});
 module.exports = server;

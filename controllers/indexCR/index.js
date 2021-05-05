@@ -128,6 +128,8 @@ module.exports = {
     const splits = authorization.split(" ");
     const access = [];
 
+    console.log("token: ", req.headers);
+
     splits.map((el) => {
       if (el.includes("accessToken")) {
         access.push(el);
