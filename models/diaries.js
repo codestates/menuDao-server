@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       choice_menu: DataTypes.STRING,
       users_id: DataTypes.STRING,
       comment: DataTypes.STRING,
+      big_choice_menu: DataTypes.STRING,
     },
     {
       sequelize,
