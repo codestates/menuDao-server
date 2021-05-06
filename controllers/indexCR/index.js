@@ -50,7 +50,7 @@ module.exports = {
           .cookie("accessToken", accessToken, {
             maxAge: 1000 * 60 * 15, // 15분 간유지
             httpOnly: true,
-            domain: ".menudao.cf",
+            // domain: ".menudao.cf",
           })
           .send({ message: "successfully sign in" });
       })
